@@ -16,6 +16,7 @@ public class TempleTrekkingBogHelperOverlay extends Overlay {
 	private final Set<TileMarked> MARKED_TILES = new HashSet<>();
 
 	private final Client client;
+	private final TempleTrekkingBogHelperPlugin plugin;
 	private final TempleTrekkingBogHelperConfig config;
 
 	@Inject
@@ -23,10 +24,11 @@ public class TempleTrekkingBogHelperOverlay extends Overlay {
 			TempleTrekkingBogHelperConfig config) {
 		super(plugin);
 		setPosition(OverlayPosition.DYNAMIC);
-		setLayer(OverlayLayer.ABOVE_WIDGETS);
-		setPriority(OverlayPriority.HIGHEST);
+		setLayer(OverlayLayer.ABOVE_SCENE);
+		setPriority(Overlay.PRIORITY_MED);
 		this.client = client;
 		this.config = config;
+		this.plugin = plugin;
 	}
 
 	public void setTargetFirm() {
@@ -45,7 +47,7 @@ public class TempleTrekkingBogHelperOverlay extends Overlay {
 			sx--;
 		}
 
-		MARKED_TILES.add(new TileMarked(sx, sy, client.getPlane()));
+		MARKED_TILES.add(new TileMarked(sx, sy, plugin.getPlane()));
 	}
 
 	public void setFirm() {
@@ -53,7 +55,7 @@ public class TempleTrekkingBogHelperOverlay extends Overlay {
 		LocalPoint local = player.getLocalLocation();
 		int sx = local.getSceneX();
 		int sy = local.getSceneY();
-		MARKED_TILES.add(new TileMarked(sx, sy, client.getPlane()));
+		MARKED_TILES.add(new TileMarked(sx, sy, plugin.getPlane()));
 	}
 
 	public void clearMarked() {
@@ -67,7 +69,7 @@ public class TempleTrekkingBogHelperOverlay extends Overlay {
 		LocalPoint local = player.getLocalLocation();
 
 		int region_id = world.getRegionID();
-		if (client.isInInstancedRegion()) {
+		if (plugin.inInstancedRegion()) {
 			region_id = WorldPoint.fromLocalInstance(client, local).getRegionID();
 		}
 		// If not in the bog, return
@@ -75,8 +77,8 @@ public class TempleTrekkingBogHelperOverlay extends Overlay {
 			return;
 		}
 		// INt he bog here mark tiles
-		int z = client.getPlane();
-		Tile[][][] tiles = client.getScene().getTiles();
+		int z = plugin.getPlane();
+		Tile[][][] tiles = plugin.getScene().getTiles();
 
 		for (int x = 0; x < Constants.SCENE_SIZE; ++x) {
 			for (int y = 0; y < Constants.SCENE_SIZE; ++y) {

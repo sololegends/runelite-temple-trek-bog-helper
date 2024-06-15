@@ -41,6 +41,20 @@ public class TempleTrekkingBogHelperPlugin extends Plugin {
 		overlay_manager.remove(bog_overlay);
 	}
 
+	public Scene getScene() {
+		WorldView wv = client.getTopLevelWorldView();
+		return wv == null ? null : wv.getScene();
+	}
+
+	public int getPlane() {
+		return client.getTopLevelWorldView().getPlane();
+	}
+
+	public boolean inInstancedRegion() {
+		WorldView wv = client.getTopLevelWorldView();
+		return wv == null ? false : wv.isInstance();
+	}
+
 	@Subscribe
 	public void onChatMessage(ChatMessage event) {
 		if (event.getType() != ChatMessageType.GAMEMESSAGE) {
@@ -64,7 +78,7 @@ public class TempleTrekkingBogHelperPlugin extends Plugin {
 			LocalPoint local = player.getLocalLocation();
 
 			int region_id = world.getRegionID();
-			if (client.isInInstancedRegion()) {
+			if (inInstancedRegion()) {
 				region_id = WorldPoint.fromLocalInstance(client, local).getRegionID();
 			}
 			// If not in the bog, clear marked
